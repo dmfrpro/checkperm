@@ -1,10 +1,21 @@
-SRC_DIR := src
-BUILD_DIR := build
-CFLAGS := -g -Wall
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c2x
+SRC_DIR = ./src
+OBJ_DIR = ./obj
 
-all: $(OBJS)
-	$(shell mkdir -p ${BUILD_DIR})
-	$(shell gcc ${SRC_DIR}/main.c ${SRC_DIR}/argresolver.c ${SRC_DIR}/argerror.c -o ${BUILD_DIR}/checkperm)
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
+HEADERS = $(wildcard $(SRC_DIR)/*.h)
+
+TARGET = checkperm
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-    $(shell rm -rf $(BUILD_DIR)/*)
+	rm -rf $(OBJS) $(TARGET)
+
